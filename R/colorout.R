@@ -121,10 +121,16 @@ GetColorCode <- function(x, name)
                 if(x[3])
                     colstr <- paste0(colstr, ";38;5;", x[3])
             } else {
-                if(x[2])
+                if(!is.na(x[2])) {
                     colstr <- paste0(colstr, ";4", x[2])
-                if(x[3])
+                } else {
+                    colstr <- paste0(colstr, ";49")
+                }
+                if(!is.na(x[3])) {
                     colstr <- paste0(colstr, ";3", x[3])
+                } else {
+                    colstr <- paste0(colstr, ";39")
+                }
             }
             colstr <- paste0(colstr, "m")
         }
