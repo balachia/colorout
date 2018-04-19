@@ -101,8 +101,10 @@ GetColorCode <- function(x, name)
     } else {
         x[x > 255] <- 0
         x[x < 0] <- 0
-        if(length(x) < 3)
-            x <- c(rep(0, 3 - length(x)), x)
+        if(length(x) == 2)
+            x <- c(0, x)
+        if(length(x) == 1)
+            x <- c(0, NA, x)
 
         ## if "fbterm" && maxcolour = 255 (osx has "xterm-256color")
         if(Sys.getenv("TERM") == "fbterm" && max(x) > 7){
@@ -115,23 +117,41 @@ GetColorCode <- function(x, name)
             colstr <- "\033[0"
             if(x[1])
                 colstr <- paste0(colstr, ";", x[1])
-            if(max(x) > 7){
-                if(x[2])
-                    colstr <- paste0(colstr, ";48;5;", x[2])
-                if(x[3])
-                    colstr <- paste0(colstr, ";38;5;", x[3])
+            if(is.na(x[2])) {
+                colstr <- paste0(colstr, ";49")
             } else {
-                if(!is.na(x[2])) {
+                if(max(x[2]) > 7) {
+                    colstr <- paste0(colstr, ";48;5;", x[2])
+                } else {
                     colstr <- paste0(colstr, ";4", x[2])
-                } else {
-                    colstr <- paste0(colstr, ";49")
-                }
-                if(!is.na(x[3])) {
-                    colstr <- paste0(colstr, ";3", x[3])
-                } else {
-                    colstr <- paste0(colstr, ";39")
                 }
             }
+            if(is.na(x[3])) {
+                colstr <- paste0(colstr, ";39")
+            } else {
+                if(max(x[3]) > 7) {
+                    colstr <- paste0(colstr, ";38;5;", x[3])
+                } else {
+                    colstr <- paste0(colstr, ";3", x[3])
+                }
+            }
+            #if(max(x) > 7){
+            #    if(x[2])
+            #        colstr <- paste0(colstr, ";48;5;", x[2])
+            #    if(x[3])
+            #        colstr <- paste0(colstr, ";38;5;", x[3])
+            #} else {
+            #    if(!is.na(x[2])) {
+            #        colstr <- paste0(colstr, ";4", x[2])
+            #    } else {
+            #        colstr <- paste0(colstr, ";49")
+            #    }
+            #    if(!is.na(x[3])) {
+            #        colstr <- paste0(colstr, ";3", x[3])
+            #    } else {
+            #        colstr <- paste0(colstr, ";39")
+            #    }
+            #}
             colstr <- paste0(colstr, "m")
         }
     }
